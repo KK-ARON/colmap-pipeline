@@ -354,6 +354,7 @@ def run_colmap_pipeline(
             "success": bool,
             "num_images": int,
             "num_registered": int,
+            "registration_rate": float,
             "num_points3d": int,
             "time_extraction": float,
             "time_matching": float,
@@ -374,12 +375,22 @@ def run_colmap_pipeline(
         "success": False,
         "num_images": 0,
         "num_registered": 0,
+        "registration_rate": 0.0,
         "num_points3d": 0,
         "time_extraction": 0.0,
         "time_matching": 0.0,
         "time_mapping": 0.0,
         "error_message": ""
     }
+
+    if not image_dir.exists():
+        result["error_message"] = f"图像目录不存在: {image_dir}"
+        return result
+
+    image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".tif", ".tiff", ".webp"}
+    result["num_images"] = sum(
+        1 for p in image_dir.iterdir() if p.is_file() and p.suffix.lower() in image_extensions
+    )
 
     print("步骤 1: 特征提取")
     print("-" * 40)
@@ -443,12 +454,17 @@ def run_colmap_pipeline(
     # 填充统计信息
     result["num_cameras"] = model_stats.get("num_cameras", 0)
     result["num_registered"] = model_stats.get("num_registered", 0)
-    result["num_images"] = model_stats.get("num_images", 0)
     result["num_points3d"] = model_stats.get("num_points3d", 0)
+    if result["num_images"] > 0:
+        result["registration_rate"] = result["num_registered"] / result["num_images"]
+    else:
+        result["registration_rate"] = 0.0
     result["success"] = True
     
     print(f"相机数量: {result['num_cameras']}")
+    print(f"输入图像数量: {result['num_images']}")
     print(f"已注册图像数量: {result['num_registered']}")
+    print(f"注册率: {result['registration_rate']:.2%}")
     print(f"3D 点数量: {result['num_points3d']}")
     
     return result
@@ -513,7 +529,9 @@ if __name__ == "__main__":
     print(f"成功: {result['success']}")
     if result['success']:
         print(f"相机数量: {result['num_cameras']}")
+        print(f"输入图像: {result['num_images']}")
         print(f"已注册图像: {result['num_registered']}")
+        print(f"注册率: {result['registration_rate']:.2%}")
         print(f"3D 点数量: {result['num_points3d']}")
         print(f"特征提取耗时: {result['time_extraction']:.2f}s")
         print(f"特征匹配耗时: {result['time_matching']:.2f}s")
