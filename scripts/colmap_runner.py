@@ -260,7 +260,6 @@ def parse_colmap_model(sparse_dir):
     返回：
         dict: {
             "num_cameras": int,
-            "num_images": int,
             "num_registered": int,
             "num_points3d": int
         }
@@ -328,7 +327,6 @@ def parse_colmap_model(sparse_dir):
     result = {}
     result["num_cameras"] = count_lines(model_dir / "cameras.txt")
     result["num_registered"] = count_registered_images(model_dir / "images.txt")
-    result["num_images"] = result["num_registered"]
     result["num_points3d"] = count_lines(model_dir / "points3D.txt")
     return result
 
