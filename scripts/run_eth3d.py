@@ -5,28 +5,28 @@ from colmap_runner import run_colmap_pipeline
 
 
 # ==================== 本轮可手动修改参数 ====================
-DATASET = "TUM"
-SEQUENCE = "freiburg1_desk"
+DATASET = "ETH3D"
+SEQUENCE = "delivery_area"
 CONFIG = "baseline"
-RUN_ID = "tum_freiburg1_desk_baseline_002"
+RUN_ID = "eth3d_delivery_area_baseline_001"
 ON_DUPLICATE = "overwrite"   # skip / overwrite / error
 
 CAMERA_MODEL = "SIMPLE_RADIAL"
 SINGLE_CAMERA = True
 TIMEOUT = None
 
-IMAGE_DIR = Path("data/TUM-rgb/prepared/rgbd_dataset_freiburg1_desk/images")
-OUTPUT_DIR = Path("runs/tum_freiburg1_desk_baseline_002")
+IMAGE_DIR = Path("data/terrace/images/dslr_images_undistorted")
+OUTPUT_DIR = Path("runs/eth3d_terrace_baseline_001")
 # ===========================================================
 
 
 def main():
-    output_dir = OUTPUT_DIR
     image_dir = IMAGE_DIR
+    output_dir = OUTPUT_DIR
     output_dir.mkdir(parents=True, exist_ok=True)
 
     print("=" * 80)
-    print("运行 TUM  -  配置")
+    print("运行 ETH3D ")
     print("=" * 80)
     print(f"输入: {image_dir}")
     print(f"输出: {output_dir}\n")
@@ -64,7 +64,9 @@ def main():
         print(f"   注册图像: {result['num_registered']}")
         print(f"   注册率: {result['registration_rate']:.2%}")
         print(f"   3D 点数: {result['num_points3d']}")
-        print(f"   总耗时: {result['time_extraction'] + result['time_matching'] + result['time_mapping']:.2f}s")
+        print(
+            f"   总耗时: {result['time_extraction'] + result['time_matching'] + result['time_mapping']:.2f}s"
+        )
     else:
         print(f"❌ 重建失败: {result['error_message']}")
 

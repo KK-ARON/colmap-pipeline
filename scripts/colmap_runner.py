@@ -372,12 +372,15 @@ def run_colmap_pipeline(
     result = {
         "success": False,
         "num_images": 0,
+        "num_cameras": 0,
         "num_registered": 0,
         "registration_rate": 0.0,
         "num_points3d": 0,
         "time_extraction": 0.0,
         "time_matching": 0.0,
         "time_mapping": 0.0,
+        "camera_model": camera_model,
+        "single_camera": single_camera,
         "error_message": ""
     }
 
@@ -470,60 +473,61 @@ def run_colmap_pipeline(
 
 
 if __name__ == "__main__":
-    # # 测试 1: 执行成功的命令
-    # print("测试 1: colmap -h")
-    # success, elapsed, error = run_colmap_command(
-    #     ["colmap", "-h"],
-    #     "test_logs/colmap_help.log"
-    # )
-    # print(f"  成功: {success}, 耗时: {elapsed:.2f}s, 错误: {error}")
-    
-    # # 测试 2: 不存在的命令
-    # print("\n测试 2: 不存在的命令")
-    # success, elapsed, error = run_colmap_command(
-    #     ["not_exist_command"],
-    #     "test_logs/not_exist.log"
-    # )
-    # print(f"  成功: {success}, 耗时: {elapsed:.2f}s, 错误: {error}")
-    
-    # # 测试 3: 超时（sleep 5秒，但只给 2秒 timeout）
-    # print("\n测试 3: 超时测试")
-    # import sys
-    # if sys.platform == "win32":
-    #     cmd = ["timeout", "5"]  # Windows
-    # else:
-    #     cmd = ["sleep", "5"]    # Linux/Mac
-    
-    # success, elapsed, error = run_colmap_command(
-    #     cmd,
-    #     "test_logs/timeout.log",
-    #     timeout=2
-    # )
-    # print(f"  成功: {success}, 耗时: {elapsed:.2f}s, 错误: {error}")
-    
-    # 测试 4: 运行 COLMAP 三步流程
+    parser = argparse.ArgumentParser(description="运行通用 COLMAP 稀疏重建流程")
+    parser.add_argument("--image_dir", required=True, help="输入图像目录")
+    parser.add_argument("--output_dir", required=True, help="输出目录")
+    parser.add_argument("--camera_model", default="SIMPLE_RADIAL", help="相机模型")
+    parser.add_argument(
+        "--single_camera",
+        choices=["true", "false", "1", "0"],
+        default="true",
+        help="是否所有图像共用一个相机"
+    )
+    parser.add_argument(
+        "--timeout",
+        type=int,
+        default=None,
+        help="每个步骤超时时间（秒），默认不限制"
+    )
+    parser.add_argument(
+        "--summary_file",
+        default=None,
+        help="可选：将结果保存为 summary.json（默认 output_dir/summary.json）"
+    )
+
+    args = parser.parse_args()
+
+    image_dir = Path(args.image_dir)
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    single_camera = args.single_camera.lower() in {"true", "1"}
+
     print("\n" + "="*80)
-    print("测试 4: COLMAP 完整流程 (run_colmap_pipeline)")
+    print("COLMAP 通用稀疏重建")
     print("="*80)
-    
-    image_dir = Path(r"D:\programs\colmap-pipeline\data\delivery_area\images\dslr_images_undistorted")
-    output_dir = Path(r"D:\programs\colmap-pipeline\runs\test")
-    
     print(f"输入图像: {image_dir}")
-    print(f"输出目录: {output_dir}\n")
-    
-    # 调用完整流程
+    print(f"输出目录: {output_dir}")
+    print(f"相机模型: {args.camera_model}")
+    print(f"单相机: {single_camera}")
+    print(f"超时设置: {args.timeout}\n")
+
     result = run_colmap_pipeline(
         image_dir=image_dir,
         output_dir=output_dir,
-        camera_model="SIMPLE_RADIAL",
-        single_camera=True,
-        timeout=None
+        camera_model=args.camera_model,
+        single_camera=single_camera,
+        timeout=args.timeout
     )
-    
+
+    summary_file = Path(args.summary_file) if args.summary_file else output_dir / "summary.json"
+    with open(summary_file, "w", encoding="utf-8") as f:
+        import json
+        json.dump(result, f, indent=2)
+
     print("\n" + "="*80)
     print("流程执行结果")
     print("="*80)
+    print(f"Summary: {summary_file}")
     print(f"成功: {result['success']}")
     if result['success']:
         print(f"相机数量: {result['num_cameras']}")

@@ -59,7 +59,7 @@ if __name__ == "__main__":
 # 使用示例:
 '''
 # PowerShell:
-python scripts/prepare_tum.py --input data/TUM-rgb/rgbd_dataset_freiburg1_desk --output data/TUM-rgb/prepared/rgbd_dataset_freiburg1_desk
+python scripts/preprocess_tum.py --input data/TUM-rgb/rgbd_dataset_freiburg1_room --output data/TUM-rgb/prepared/rgbd_dataset_freiburg1_room
 
 # PowerShell（多行）:
 python scripts/prepare_tum.py `
