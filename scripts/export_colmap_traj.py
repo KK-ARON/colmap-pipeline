@@ -12,10 +12,10 @@ t = (tx, ty, tz) 为平移向量。
 按时间戳排序，可用于与 traj_gt.csv 进行 ATE 评估。
 
 Usage:
-    python scripts/export_colmap_traj.py \
-        --images_txt   runs/tum_freiburg1_desk/colmap_output/sparse/0/images.txt \
-        --ts_mapping   data/TUM-rgb/prepared/rgbd_dataset_freiburg1_desk/timestamp_mapping.csv \
-        --output       runs/tum_freiburg1_desk/traj_est.csv
+    python scripts/export_colmap_traj.py`
+    --images_txt   runs/tum_freiburg1_desk_baseline_002/colmap_output/sparse/0/images.txt`
+    --ts_mapping   data/TUM-rgb/prepared/rgbd_dataset_freiburg1_desk/timestamp_mapping.csv`
+    --output       runs/tum_freiburg1_desk_baseline_002/traj_est.csv
 """
 
 import argparse

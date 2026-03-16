@@ -19,6 +19,9 @@ BENCHMARK_FIELDS = [
     "time_mapping_s",
     "time_total_s",
     "camera_model",
+    "ate_rmse",
+    "ate_num_pairs",
+    "ate_scale",
     "status",
     "run_id",
     "timestamp",
@@ -90,6 +93,9 @@ def add_to_benchmark(summary_file, dataset, sequence, config, run_id,
         "time_mapping_s": f"{time_mapping:.2f}",
         "time_total_s": f"{time_extraction + time_matching + time_mapping:.2f}",
         "camera_model": camera_model_value,
+        "ate_rmse": result.get("ate_rmse", ""),
+        "ate_num_pairs": result.get("ate_num_pairs", ""),
+        "ate_scale": result.get("ate_scale", ""),
         "status": "success" if result.get("success", False) else "failed",
         "run_id": run_id,
         "timestamp": datetime.now().isoformat()
@@ -126,6 +132,10 @@ def add_to_benchmark(summary_file, dataset, sequence, config, run_id,
     print(f"   配置: {config}")
     print(f"   状态: {record['status']}")
     print(f"   注册率: {float(record['registration_rate']):.2%}")
+    if record["ate_rmse"] != "":
+        print(f"   ATE RMSE: {float(record['ate_rmse']):.6f} m")
+        print(f"   ATE 匹配对: {record['ate_num_pairs']}")
+        print(f"   ATE Scale: {float(record['ate_scale']):.6f}")
       
     return True
 

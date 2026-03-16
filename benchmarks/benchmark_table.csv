@@ -1,3 +1,4 @@
-dataset,sequence,config,num_images_input,num_registered,registration_rate,num_points3d,time_extraction_s,time_matching_s,time_mapping_s,time_total_s,camera_model,status,run_id,timestamp
-ETH3D,delivery_area,baseline,23,8,0.3478,3049,3.06,0.46,2.61,6.12,SIMPLE_RADIAL,success,eth3d_delivery_area_baseline_001,2026-03-11T19:31:53.681495
-TUM,freiburg1_desk,baseline,613,613,1.0000,52690,8.22,74.36,886.41,969.00,SIMPLE_RADIAL,success,tum_freiburg1_desk_baseline_002,2026-03-11T20:03:06.749041
+dataset,sequence,config,num_images_input,num_registered,registration_rate,num_points3d,time_extraction_s,time_matching_s,time_mapping_s,time_total_s,camera_model,ate_rmse,ate_num_pairs,ate_scale,status,run_id,timestamp
+ETH3D,delivery_area,baseline,23,8,0.3478,3049,3.06,0.46,2.61,6.12,SIMPLE_RADIAL,,,,success,eth3d_delivery_area_baseline_001,2026-03-11T19:31:53.681495
+TUM,freiburg1_desk,baseline,613,613,1.0000,52690,8.22,74.36,886.41,969.00,SIMPLE_RADIAL,,,,success,tum_freiburg1_desk_baseline_002,2026-03-11T20:03:06.749041
+TUM,freiburg1_room,baseline,1362,1360,0.9985,90281,18.97,286.83,4157.31,4463.11,SIMPLE_RADIAL,0.12110999228566545,1360,0.2763219278390943,success,tum_freiburg1_room_baseline_002,2026-03-16T17:16:34.680937

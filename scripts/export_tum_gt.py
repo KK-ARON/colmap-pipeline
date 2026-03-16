@@ -10,9 +10,9 @@ timestamp tx ty tz qx qy qz qw
 此脚本仅提取 (timestamp, tx, ty, tz)，即世界坐标系中的真实相机位置，并将其写入 traj_gt.csv，以便 ATE 与 traj_est.csv 进行对比评估。
 
 Usage:
-    python scripts/export_tum_gt.py \
-        --groundtruth  data/TUM-rgb/prepared/rgbd_dataset_freiburg1_desk/groundtruth.txt \
-        --output       runs/tum_freiburg1_desk/traj_gt.csv
+    python scripts/export_tum_gt.py `
+        --groundtruth  data/TUM-rgb/prepared/rgbd_dataset_freiburg1_desk/groundtruth.txt `
+        --output       runs/tum_freiburg1_desk_baseline_002/traj_gt.csv
 """
 
 import argparse
