@@ -222,6 +222,7 @@ def run_feature_matching(database_path, log_file, timeout=None):
     返回：
         tuple: (success: bool, elapsed_time: float, error_msg: str)
     '''
+    # 匹配模式：exhaustive_matcher(全匹配) / sequential_matcher(时序) / spatial_matcher(空间) / vocab_tree_matcher(词袋)
     cmd_list=[
         "colmap", "exhaustive_matcher",
         "--database_path", str(database_path)
