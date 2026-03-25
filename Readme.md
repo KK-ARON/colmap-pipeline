@@ -22,6 +22,44 @@
 - **估计轨迹**（`export_colmap_traj.py`）：从 COLMAP `images.txt` 提取相机位置 $C = -R^T \mathbf{t}$，结合 `timestamp_mapping.csv` 生成 `traj_est.csv`
 - **真实轨迹**（`export_tum_gt.py`）：从 TUM `groundtruth.txt` 提取位置，生成 `traj_gt.csv`
 
+### ATE 评估（已完成）
+- **ATE 计算脚本**（`compute_ATE.py`）：对 `traj_est.csv` 与 `traj_gt.csv` 进行最近邻时间戳匹配（阈值默认 `0.02s`）
+- **轨迹对齐方法**：使用 Umeyama 算法求解 Sim(3)（scale + rotation + translation）
+- **误差指标输出**：`rmse / mean / median / max / min / std`，保存为 `ate_summary.json`
+- **可视化输出**：生成 `trajectory_comparison.png`（对齐前 XY、对齐后 XY、3D 轨迹）
+
+## 预处理后可直接运行的数据目录要求
+
+以下目录结构是运行 `run_tum.py` / `run_eth3d.py` 的输入前提（即执行预处理脚本后的结构）：
+
+### TUM（`preprocess_tum.py` 后）
+
+```
+data/
+└── TUM-rgb/
+    └── prepared/
+        └── rgbd_dataset_freiburg1_desk/        # 或 room 等序列
+            ├── images/                          # 000000.png, 000001.png, ...
+            ├── timestamp_mapping.csv            # frame_id 与原始 timestamp 对应
+            └── groundtruth.txt                  # 真实轨迹（用于导出 traj_gt）
+```
+
+### ETH3D（`preprocess_ETH3D.py` 后）
+
+```
+data/
+└── <scene_name>/                                # 例如 delivery_area / terrace
+    └── processed/
+        ├── images/                              # 预处理后的图像序列
+        ├── metadata.json                        # 元数据
+        └── groundtruth/
+            ├── cameras.txt
+            ├── images.txt
+            └── points3D.txt
+```
+
+只要满足上述结构，即可直接在对应 `run_*.py` 配置里指定序列并运行。
+
 ## 快速开始
 
 ### 1. 环境配置
@@ -57,7 +95,29 @@ python scripts/export_colmap_traj.py \
 python scripts/export_tum_gt.py \
     --groundtruth  data/TUM-rgb/prepared/rgbd_dataset_freiburg1_desk/groundtruth.txt \
     --output       runs/tum_freiburg1_desk/traj_gt.csv
+
+# 4. 计算 ATE（生成 ate_summary.json 与 trajectory_comparison.png）
+python scripts/compute_ATE.py \
+    --traj-est      runs/tum_freiburg1_desk/traj_est.csv \
+    --traj-gt       runs/tum_freiburg1_desk/traj_gt.csv \
+    --output-dir    runs/tum_freiburg1_desk \
+    --max-time-diff 0.02
 ```
+
+## ATE 结果示例（TUM Freiburg1 Room）
+
+来自 `runs/tum_freiburg1_room_baseline_002/ate_summary.json`：
+
+- `num_matched_timestamps`: 1360
+- `rmse`: 0.1211 m
+- `mean`: 0.0910 m
+- `median`: 0.0714 m
+- `max`: 0.4373 m
+- `std`: 0.0799 m
+
+轨迹对比图（`runs/tum_freiburg1_room_baseline_002/trajectory_comparison.png`）：
+
+![ATE Trajectory Comparison](runs/tum_freiburg1_room_baseline_002/trajectory_comparison.png)
 
 ## 项目结构
 
@@ -88,11 +148,8 @@ colmap-pipeline/
 - [x] 自动指标提取与 summary.json 输出
 - [x] Benchmark CSV 管理（run_id 去重）
 - [x] 轨迹导出（traj_est.csv / traj_gt.csv）
+- [x] ATE 评估（时间戳匹配 + Umeyama Sim(3) 对齐 + RMSE 指标与轨迹可视化）
 
-## 下一步目标
-
-- [ ] **ATE 评估**：基于 `traj_est.csv` 与 `traj_gt.csv`，通过 SVD 对齐求解绝对轨迹误差（RMSE）
-- [ ] **关键帧抽取**：从视频流中自动筛选高质量关键帧，减少冗余并提升重建质量
 
 ## 许可
 
